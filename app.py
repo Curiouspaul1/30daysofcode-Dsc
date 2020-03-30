@@ -32,6 +32,21 @@ def checker(*args):
         elif args[0] < 0 and args[1] > 0:
             return f"{args[0]} is Negative, {args[1]} is Positive"
 
+# Type check (Day 2)
+def typecheck(*args):
+    if len(args) != 0:
+        typeof = type(args[0])
+        if typeof:
+            return typeof
+        else:
+            return "Error"
+    else:
+        return "Error"
 
 print(checker(-2,4))
 dateview()
+
+try:
+    print(typecheck())
+except SyntaxError or TypeError or NameError or ValueError:
+    raise "Error"
