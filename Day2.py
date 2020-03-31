@@ -1,5 +1,6 @@
 # Type check (Day 2)
 def typecheck(*args):
+    """Checks type() of a given argument, returns str(Error) if None """
     if len(args) != 0:
         typeof = type(args[0])
         if typeof:
