@@ -9,6 +9,9 @@ class car:
        mdn:model_no
        c:color
 
+        tyres() is a class method bounded to the car class
+        and it prints the number of tyres a car has from
+        the class variable no_of_tyres
     """
     def __init__(self,brand,model_no,color):
         self.b = brand
