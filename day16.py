@@ -13,7 +13,9 @@ app = Flask(__name__)
 #app config
 """
 This config clause specifies the database location. And disabes an option to
-track changes in database to False (it's turned on by default)
+track changes in database to False (it's turned on by default). Sqlite comes
+by default with flask so no need to worry
+about installing any rdbms
 """
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(basedir,"app.sqlite")  or os.getenv("DATABASE_URI")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
