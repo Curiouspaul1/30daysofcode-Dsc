@@ -36,6 +36,7 @@ class User(db.Model):
     email = db.Column(db.String(100),unique=True)   ## The unique property on email, disallows duplicate emails
     password = db.Column(db.String(100))
 
+# Signup Handler
 @app.route('/signup',methods=['POST'])
 def signup():
     # fetch data
@@ -61,6 +62,7 @@ def signup():
    
     return make_response("registration successful",200)
 
+# Login/Auth Handler
 @app.route('/login',methods=['POST'])
 def login():
     login_data = request.get_json()
