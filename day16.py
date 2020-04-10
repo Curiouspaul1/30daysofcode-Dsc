@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify,make_response,redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
-from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
 from day10 import emailcheck
 import os
