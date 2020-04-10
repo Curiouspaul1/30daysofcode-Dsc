@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify,make_response,redirect,url_for
+from flask import Flask, request, jsonify,make_response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
