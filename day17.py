@@ -117,7 +117,7 @@ def login():
 
 @login_required
 @app_.route("/getuser/<email>")
-def getuser(email):\
+def getuser(email):
     #find user with email
     user = User.query.filter_by(email=email).first()
     date = user.signup_date
