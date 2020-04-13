@@ -117,10 +117,13 @@ def login():
 
 @login_required
 @app_.route("/getuser/<email>")
-def getuser(email):
+def getuser(email):\
     #find user with email
     user = User.query.filter_by(email=email).first()
-    return jsonify({"username":user.username,"email":user.email,"date":str(user.signup_date.date()),"time":str(user.signup_date.time())})
+    date = user.signup_date
+    date_ = str(date)
+    time = date_.split(' ')
+    return jsonify({"username":user.username,"email":user.email,"date":str(date.strftime('%A')),"time":f"{time[1]} {date.strftime('%p')}"})
 
 if __name__ == '__main__':
     app_.run(debug=True)
