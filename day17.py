@@ -56,7 +56,7 @@ def login_required(f):
             try:
                 #try to fetch user data using token
                 data = token.decode(token,app_.config["SECRET_KEY"])
-                user = User.query.filter_by(email=data["email"]).first()
+                current_user = User.query.filter_by(email=data["email"]).first()
 
                 if user:
                     return f(user,*args,**kwargs)
@@ -115,9 +115,9 @@ def login():
 
     return make_response("No such user found",401,{'WWW-Authenticate' : 'Basic realm="Login required"'})
 
-@login_required
 @app_.route("/getuser/<email>")
-def getuser(email):
+@login_required
+def getuser(current_user,email):
     #find user with email
     user = User.query.filter_by(email=email).first()
     date = user.signup_date
