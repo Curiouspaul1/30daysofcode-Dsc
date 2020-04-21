@@ -1,4 +1,3 @@
-.flaskenv
-.env
-*__pycache__/
-day17.py
+**/day_18/.flaskenv
+**/day_18/.env
+**/day_18/__pycache__/
