@@ -1,8 +1,8 @@
 from flask import Flask
-from flask_pymongo import PyMongo
+from flask_mongoalchemy import MongoAlchemy
 from flask_bcrypt import Bcrypt
 
-mongo = PyMongo()
+mongo = MongoAlchemy()
 bcrypt = Bcrypt()
 
 def create_app(config_object):
