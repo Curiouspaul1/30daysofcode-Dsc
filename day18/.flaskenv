@@ -1,3 +1,0 @@
-FLASK_APP=day18
-FLASK_ENVIRONMENT=development
-
