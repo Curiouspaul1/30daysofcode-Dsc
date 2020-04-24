@@ -1,7 +1,8 @@
 from flask import Blueprint,request,make_response,jsonify,current_app,json
 from functools import wraps
-from day18 import bcrypt,mongo
-from day18.extensions import emailcheck
+from day19 import bcrypt,mongo
+from day19.extensions import emailcheck
+from jwt.exceptions import ExpiredSignatureError
 import jwt
 import datetime as d
 
@@ -33,12 +34,16 @@ def token_required(f):
             if token:
                 try:
                     data = jwt.decode(token,current_app.config['SECRET_KEY'])
-                    current_user = User.query.filter(User.email==data['email']).first() or User.query.filter(User.username==data['email']).first()
-                    return f(current_user, *args, **kwargs)
-                except:
-                    return jsonify({'message':'TOken is invalid'}),401
+                    active_user = User.query.filter(User.email==data['email']).first() or User.query.filter(User.username==data['email']).first()
+                except ExpiredSignatureError as e:
+                    return jsonify({"message":"Token is expired"}),401
+                    raise e
+                
+                return f(active_user, *args, **kwargs)
+            else:
+                return jsonify({'message':'Token is missing'}),404
         else:
-            return jsonify({'message':'Token is missing'}),404
+            return jsonify({'message':'Token header is missing'}),404
     return decorated
 
 @main.route('/createuser',methods=['POST'])
@@ -74,16 +79,15 @@ def login():
     # Verify user password
     if bcrypt.check_password_hash(user.password,auth.password):
         token = jwt.encode({'email':user.email, 'exp' : d.datetime.utcnow() + d.timedelta(minutes=30)}, current_app.config['SECRET_KEY'])
-
         return jsonify({"token" : token.decode('UTF-8')})
 
-    return make_response("No such user found",401,{'WWW-Authenticate' : 'Basic realm="Login required"'})
+    return make_response("Incorrect Password",401,{'WWW-Authenticate' : 'Basic realm="Login required"'})
 
 
 
 @main.route("/getuser/<email>")
 @token_required
-def getuser(current_user,email):
+def getuser(active_user,email):
     #find user with email
     result = User.query.filter(User.email == f'{email}').first()
     date = result.signup_date
@@ -93,3 +97,42 @@ def getuser(current_user,email):
     if result:
         return jsonify({"_id":str(result.id),"username":result.username,"email":result.email,"date":str(date).split(' ')[0],"time":f"{time[1]} ".split('.')[0] + f" {date.strftime('%p')}"})
     return jsonify({"message":"No such user found"})
+
+@main.route('/getusers')
+@token_required
+def getusers(active_user):
+    users = User.query.all()
+    result = []
+    for user in users:
+        date = user.signup_date
+        date_ = str(date)
+        time = date_.split(' ')
+        result.append({"_id":str(user.id),"username":user.username,"email":user.email,"date":str(date).split(' ')[0],"time":f"{time[1]} ".split('.')[0] + f" {date.strftime('%p')}"})
+    return jsonify({"users":result})
+
+
+@main.route('/delete_user/<username>',methods=['DELETE'])
+@token_required
+def delete_user(active_user,username):
+    # fetch user
+    user = User.query.filter(User.username == f'{username}').first()
+    if user:
+        user.remove()
+        return jsonify({"message":"Deleted successfully"}),200
+    return jsonify({"message":"No such user found"}),404
+
+@main.route('/update_user/<username>',methods=['PUT'])
+@token_required
+def update_user(active_user,username):
+    user = User.query.filter(User.username == f'{username}').first()
+    email = request.json['email']
+    if user:
+        if emailcheck(email):
+            user.email = email
+            user.save()
+        else:
+            return jsonify({"message":"Invalid entry"}),401
+    else:
+        return jsonify({"message":"User not found"}),404
+    return jsonify({"message":"Updated user successfully"}),200
+
