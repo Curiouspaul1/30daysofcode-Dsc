@@ -1,6 +1,6 @@
-from .coinapp import __call__,db
-from .coinapp.extensions import migrate
-from .coinapp.models import User,Wallet
+from coinapp import __call__,db
+from coinapp.extensions import migrate
+from coinapp.models import User,Wallet
 import os
 
 app = __call__('default' or os.getenv('FLASK_CONFIG'))

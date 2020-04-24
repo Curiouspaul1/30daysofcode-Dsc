@@ -1,5 +1,6 @@
 from flask import Flask
 from .extensions import db,bcrypt,ma
+from config import config
 
 def __call__(config_object):
     app = Flask(__name__)
